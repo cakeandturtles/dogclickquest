@@ -53,6 +53,16 @@ class Animation {
         }
     }
     
+    render(image, x, y){
+        var clip = this.getClippingRect();
+        var width = clip[2];
+        var height = clip[3]
+        ctx.drawImage(image, 
+            clip[0], clip[1], width, height,
+            x, y, width, height
+        );
+    }
+    
     /**
     * returns an array used for ctx.drawImages parameters
     * [sx, sy, swidth, sheight]

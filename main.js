@@ -3,53 +3,51 @@ var ctx;
 
 var dog;
 var frog;
+var key_manager;
 
-function main(){
+function main(){    
+    //TODO: preload images with webworker,
+    // assign images via calls to Resources.getImage
+    Resources.loadImage("dogsheet.png", function(dog_img){
+        Resources.loadImage("frogsheet.png", function(frog_img){
+            
+        });
+    });
+}
+
+function init(){
     canvas = document.getElementById("dogcanvas");
     canvas.width = 320;
     canvas.height = 320;
     ctx = canvas.getContext("2d");
     
-    //TODO: preload images with webworker,
-    // assign images via calls to Resources.getImage
-    Resources.loadImage("dogsheet.png", function(dog_img){
-        Resources.loadImage("frogsheet.png", function(frog_img){
-            dog = new Dog();
-            dog.x = 128;
-            dog.y = 128;
-            dog.image = Resources.getImage("dogsheet");
-            
-            frog = new Animal();
-            frog.x = 208;
-            frog.y = 16;
-            frog.image = Resources.getImage("frogsheet");
-            frog.animation.change(0, 0, 4);
-            
-            window.setInterval(function(){
-                update();
-                render();
-            }, 33);
-            
-            //TODO: add KeyManager
-            window.onkeydown = function(e){
-                dog.animation.frame_delay = 3;
-                var speed = 4;
-                if (e.keyCode == 38) dog.y-=speed;
-                if (e.keyCode == 40) dog.y+=speed;
-                if (e.keyCode == 37) dog.x-=speed;
-                if (e.keyCode == 39) dog.x+=speed;
-            }
-            
-            window.onkeyup = function(e){
-                dog.animation.frame_delay = 10;
-            }
-        });
-    });
+    dog = new Dog();
+    dog.x = 128;
+    dog.y = 128;
+    dog.image = Resources.getImage("dogsheet");
+    
+    frog = new Animal();
+    frog.x = 208;
+    frog.y = 16;
+    frog.image = Resources.getImage("frogsheet");
+    frog.animation.change(0, 0, 4);
+    
+    window.setInterval(function(){
+        update();
+        render();
+    }, 33);
+    
+    //set up input manager
+    window.onkeydown = Input.onkeydown;
+    window.onkeyup = Input.onkeyup;
 }
 
 function update(){
     dog.update();
     frog.update();
+    
+    //update input manager
+    Input.update();
 }
 
 function render(){

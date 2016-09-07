@@ -13,12 +13,6 @@ class Animal {
     }
     
     render(){
-        var clip = this.animation.getClippingRect();
-        var width = clip[2];
-        var height = clip[3]
-        ctx.drawImage(this.image, 
-            clip[0], clip[1], width, height,
-            this.x, this.y, width, height
-        );
+        this.animation.render(this.image, this.x, this.y);
     }
 }

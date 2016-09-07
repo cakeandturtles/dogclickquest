@@ -1,7 +1,7 @@
 let _resources_images = {};
 let _resources_dir = "resources";
 
-class Resources{
+class Resources {
     static images(){ return _imageLoader_images; }
     
     static getImage(img_name){
@@ -14,7 +14,7 @@ class Resources{
     *   key = name of image in image src (excluding directories and file extension)
     * and calls the callback, passing the image as the parameter
     **/
-    static loadImage(img_src, callback){
+    static loadImage(img_src, callback) {
         var split = img_src.split("/");
         var img_ext_name = split[split.length-1];
         var split = img_ext_name.split(".");
