@@ -8,7 +8,7 @@ class Dog extends Animal {
     update() {
         super.update();
         
-        var speed = 4;
+        var speed = 7;
         var moved = false;
         
         if (Input.isKeyDown(Input.LEFT_KEY)){

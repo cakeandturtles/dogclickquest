@@ -2,24 +2,26 @@
     <head>
         <title>dog click quest</title>
         <style type="text/css">
-            body{
-                background: #000000;
-            }
-            #dogcanvas{
+			body {
+				/*background: #FF9696;*/
+				background: #000000;
+			}
+            #dogcanvas {
                 background: #ffffff;
-                padding: 0;
-                margin: auto;
-                display: block;
-                position: absolute;
-                top: 0;
                 bottom: 0;
+                display: block;
                 left: 0;
+                margin: auto;
+                padding: 0;				
+                position: absolute;
                 right: 0;
+                top: 0;
             }
         </style>
         
         <script src="scripts/clickengine/Animation.js"></script>
         <script src="scripts/clickengine/Input.js"></script>
+		<script src="scripts/clickengine/RenderUtils.js"></script>
         <script src="scripts/clickengine/Resources.js"></script>
         
         <script src="scripts/Animal.js"></script>
@@ -28,7 +30,6 @@
         <script src="main.js"></script>
     </head>
     <body>
-        <
         <canvas id="dogcanvas"></canvas>
     </body>
 </html>

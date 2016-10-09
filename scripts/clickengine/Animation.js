@@ -3,8 +3,8 @@
  */
 class Animation {
     constructor(){
-        this.frame_width = 64;
-        this.frame_height = 64;
+        this.frame_width = 128;
+        this.frame_height = 128;
         
         this.timer = 0;
         this.frame_delay = 8;

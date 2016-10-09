@@ -4,6 +4,7 @@ var dog;
 var frog;
 
 var DOG_IMG = "dogsheet.png";
+var DOGBABY_IMG = "dogbabysheet.png";
 var FROG_IMG = "frogsheet.png";
 
 function main(){
@@ -12,7 +13,7 @@ function main(){
     let loading = window.setInterval(renderLoadingScreen, 100);
     
     Resources.loadImages({
-        images: [DOG_IMG, FROG_IMG], 
+        images: [DOG_IMG, DOGBABY_IMG, FROG_IMG], 
         onload: function(){
             window.clearInterval(loading);
             initGame();
@@ -38,15 +39,15 @@ function renderLoadingScreen() {
 
 function initCanvas() {
     canvas = document.getElementById("dogcanvas");
-    canvas.width = 320;
-    canvas.height = 320;
+    canvas.width = 640;
+    canvas.height = 640;
     ctx = canvas.getContext("2d");
 }
 
 function initGame() {    
     dog = new Dog();
-    dog.x = 128;
-    dog.y = 128;
+    dog.x = canvas.width/2;
+    dog.y = canvas.height/2;
     dog.image = Resources.getImage(DOG_IMG);
     
     frog = new Animal();
@@ -54,6 +55,14 @@ function initGame() {
     frog.y = 16;
     frog.image = Resources.getImage(FROG_IMG);
     frog.animation.change(0, 0, 4);
+	
+	baby = new Animal();
+	baby.x = 400;
+	baby.y = 128;
+	baby.image = Resources.getImage(DOGBABY_IMG);
+	baby.animation.frame_width = 32;
+	baby.animation.frame_height = 32;
+	baby.animation.change(0, 0, 2);
     
     window.setInterval(function() {
         update();
@@ -67,6 +76,7 @@ function initGame() {
 
 function update() {
     dog.update();
+	baby.update();
     frog.update();
     
     //update input manager
@@ -86,38 +96,24 @@ function render() {
         dog.render();
         frog.render();
     }
+	baby.render();
 	
-	if (((dog.x >= frog.x && dog.x <= frog.x + frog.animation.frame_width) 
-		|| (dog.x + dog.animation.frame_width >= frog.x 
-			&& dog.x + dog.animation.frame_width <= frog.x + frog.animation.frame_width))
-		&& ((dog.y >= frog.y && dog.y <= frog.y + frog.animation.frame_height)
-		|| (dog.y + dog.animation.frame_height >= frog.y 
-			&& dog.y + dog.animation.frame_height <= frog.y + frog.animation.frame_height))) 
-	{
-		speak("hello lil doggy\nhow are you doing?", text_color, bg_color);
+	var speak_config = { 
+		font_color: text_color, 
+		background_color: "#000000", 
+		font_size: 24,
+		line_height: 32,
+		horizontal_align: "left",
+		vertical_align: "bottom",
+		margin: 16,
 	}
-}
-
-// TODO(jakeonaut): allow horizontal or vertical alignment (left/right and top/bottom)
-//	will need to reverse for loop for top alignment
-//	need to use measureText width to adjust position of left position on fillText
-function speak(text, text_color, bg_color) {
-	var line_height = 16;
+	if (collision(dog, frog)) {
+		speak("hello lil doggy,\nplease catch me 10 bug", speak_config);
+	}
 	
-	ctx.font = line_height + "px Verdana";
-	
-	var y_offset = 64 - line_height*2;
-	var y_kerning = 4;
-	
-	var lines = text.split("\n");
-	for (var i = lines.length-1; i >= 0; i--) {
-		var line = lines[i];
-		
-		ctx.fillStyle = "#000000";
-		ctx.fillRect(16 - y_kerning, y_offset - y_kerning, 
-			ctx.measureText(line).width + y_kerning * 2, 16 + y_kerning * 2);
-		ctx.fillStyle = text_color;
-		ctx.fillText(line, 16, y_offset + 14);
-		y_offset -= (line_height + y_kerning);
+	if (collision(dog, baby)) {
+		speak_config.horizontal_align = "right";
+		speak_config.vertical_align = "top";
+		speak("cutie!", speak_config);
 	}
 }
