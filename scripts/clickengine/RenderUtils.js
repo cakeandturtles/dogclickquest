@@ -1,13 +1,19 @@
-function collision(a, b) {
-	return (((a.x >= b.x && a.x <= b.x + b.animation.frame_width) 
-		|| (a.x + a.animation.frame_width >= b.x 
-			&& a.x + a.animation.frame_width <= b.x + b.animation.frame_width))
-		&& ((a.y >= b.y && a.y <= b.y + b.animation.frame_height)
-		|| (a.y + a.animation.frame_height >= b.y 
-			&& a.y + a.animation.frame_height <= b.y + b.animation.frame_height)));
-}
+clickengine.renderLoadingScreen = function() {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function speak(text, config) {
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(16, canvas.height/2-8, canvas.width-32, 16);
+    ctx.font = "20px Verdana";
+    ctx.fillText("loading...", 16, canvas.height/2 - 32);
+
+    var progress = Resources.getProgress();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(17, canvas.height/2-7, ~~(progress*(canvas.width-32)), 14);
+};
+
+clickengine.speak = function(text, config) {
 	var font_size = config.font_size || 24;
 	
 	ctx.font = font_size + "px Verdana";
@@ -67,4 +73,4 @@ function speak(text, config) {
 			y -= line_height;
 		}
 	}
-}
+};

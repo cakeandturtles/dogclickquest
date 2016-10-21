@@ -6,15 +6,15 @@ class Input {
     constructor(){}
     
     static isKeyDown(key_code){
-        return _input_keys_down[key_code];
+        return key_code in _input_keys_down;
     }
     
     static isKeyUp(key_code){
-        return _input_keys_down[key_code];
+        return key_code in _input_keys_down;
     }
     
     static isKeyPressed(key_code){
-        return _input_keys_pressed[key_code];
+        return key_code in _input_keys_pressed;
     }
     
     static update(){

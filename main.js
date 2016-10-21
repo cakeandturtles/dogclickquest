@@ -1,48 +1,28 @@
-var canvas;
-var ctx;
 var dog;
 var frog;
+var baby;
+var bugs;
 
 var DOG_IMG = "dogsheet.png";
 var DOGBABY_IMG = "dogbabysheet.png";
 var FROG_IMG = "frogsheet.png";
 
 function main(){
-    initCanvas();
-    
-    let loading = window.setInterval(renderLoadingScreen, 100);
-    
-    Resources.loadImages({
-        images: [DOG_IMG, DOGBABY_IMG, FROG_IMG], 
-        onload: function(){
-            window.clearInterval(loading);
-            initGame();
-        }
+    clickengine.startGame({
+        canvas: {
+            id: "dogcanvas",
+            width: 320,
+            height: 320,
+            scale: 1
+        },
+        images: [DOG_IMG, DOGBABY_IMG, FROG_IMG, "bug.png"],
+        init: initGame,
+        update: updateGame,
+        render: renderGame
     });
 }
 window.onload = main;
 
-function renderLoadingScreen() {
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(16, canvas.height/2-8, canvas.width-32, 16);
-    ctx.font = "20px Verdana";
-    ctx.fillText("loading...", 16, canvas.height/2 - 32);
-    
-    var progress = Resources.getProgress();
-    
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(17, canvas.height/2-7, ~~(progress*(canvas.width-32)), 14);
-}
-
-function initCanvas() {
-    canvas = document.getElementById("dogcanvas");
-    canvas.width = 640;
-    canvas.height = 640;
-    ctx = canvas.getContext("2d");
-}
 
 function initGame() {    
     dog = new Dog();
@@ -57,33 +37,44 @@ function initGame() {
     frog.animation.change(0, 0, 4);
 	
 	baby = new Animal();
-	baby.x = 400;
+	baby.x = 25;
 	baby.y = 128;
 	baby.image = Resources.getImage(DOGBABY_IMG);
-	baby.animation.frame_width = 32;
-	baby.animation.frame_height = 32;
+	baby.animation.frame_width = 16;
+	baby.animation.frame_height = 16;
 	baby.animation.change(0, 0, 2);
     
-    window.setInterval(function() {
-        update();
-        render();
-    }, 33);
-    
-    //set up input manager
-    window.onkeydown = Input.onkeydown;
-    window.onkeyup = Input.onkeyup;
+    bugs = [];
+    for (var i = 0; i < 10; i++) {
+        var bug = new Animal();
+        bug.x = Math.floor(Math.random()*(clickengine.width-16));
+        bug.y = Math.floor(Math.random()*(clickengine.height-16));
+        bug.image = Resources.getImage("bug.png");
+        bug.animation.frame_width = 16;
+        bug.animation.frame_height = 16;
+        bug.animation.change(0, 0, 1);
+        bugs.push(bug);
+    }
 }
 
-function update() {
+function updateGame() {
     dog.update();
 	baby.update();
     frog.update();
     
-    //update input manager
-    Input.update();
+    for (var i = bugs.length-1; i >= 0; i--) {
+        if (bugs[i].collision(dog)) {
+            if ('bugs' in dog.inventory) {
+                dog.inventory.bugs++;
+            } else {
+                dog.inventory.bugs = 1;
+            }
+            bugs.splice(i, 1);
+        }
+    }
 }
 
-function render() {
+function renderGame() {
 	var text_color = "#FFFFFF";
 	var bg_color = "#F36B72";
     ctx.fillStyle = bg_color;
@@ -101,19 +92,27 @@ function render() {
 	var speak_config = { 
 		font_color: text_color, 
 		background_color: "#000000", 
-		font_size: 24,
-		line_height: 32,
+		font_size: 16,
+		line_height: 20,
 		horizontal_align: "left",
 		vertical_align: "bottom",
 		margin: 16,
 	}
-	if (collision(dog, frog)) {
-		speak("hello lil doggy,\nplease catch me 10 bug", speak_config);
+	if (frog.collision(dog)) {
+        if (dog.inventory.bugs < 10) {
+            clickengine.speak("hello lil doggy,\nplease catch me 10 bug", speak_config);
+        } else {
+            clickengine.speak("congratulations! \ntrade me for my frog whistle?", speak_config);
+        }
 	}
 	
-	if (collision(dog, baby)) {
-		speak_config.horizontal_align = "right";
+	if (baby.collision(dog)) {
+		speak_config.horizontal_align = "left";
 		speak_config.vertical_align = "top";
-		speak("cutie!", speak_config);
+		clickengine.speak("cutie!", speak_config);
 	}
+    
+    for (var i = bugs.length-1; i >= 0; i--) {
+        bugs[i].render();
+    }
 }
