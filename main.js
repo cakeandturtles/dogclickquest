@@ -24,26 +24,26 @@ function main(){
 window.onload = main;
 
 
-function initGame() {    
+function initGame() {
     dog = new Dog();
     dog.x = canvas.width/2;
     dog.y = canvas.height/2;
     dog.image = Resources.getImage(DOG_IMG);
-    
+
     frog = new Animal();
     frog.x = 208;
     frog.y = 16;
     frog.image = Resources.getImage(FROG_IMG);
     frog.animation.change(0, 0, 4);
-	
+
 	baby = new Animal();
 	baby.x = 25;
 	baby.y = 128;
 	baby.image = Resources.getImage(DOGBABY_IMG);
-	baby.animation.frame_width = 16;
-	baby.animation.frame_height = 16;
-	baby.animation.change(0, 0, 2);
-    
+	baby.animation.frame_width = 32;
+	baby.animation.frame_height = 32;
+	baby.animation.change(0, 0, 3);
+
     bugs = [];
     for (var i = 0; i < 10; i++) {
         var bug = new Animal();
@@ -61,7 +61,7 @@ function updateGame() {
     dog.update();
 	baby.update();
     frog.update();
-    
+
     for (var i = bugs.length-1; i >= 0; i--) {
         if (bugs[i].collision(dog)) {
             if ('bugs' in dog.inventory) {
@@ -79,7 +79,7 @@ function renderGame() {
 	var bg_color = "#F36B72";
     ctx.fillStyle = bg_color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
- 
+
     if (dog.y > frog.y + 8){
         frog.render();
         dog.render();
@@ -88,10 +88,10 @@ function renderGame() {
         frog.render();
     }
 	baby.render();
-	
-	var speak_config = { 
-		font_color: text_color, 
-		background_color: "#000000", 
+
+	var speak_config = {
+		font_color: text_color,
+		background_color: "#000000",
 		font_size: 16,
 		line_height: 20,
 		horizontal_align: "left",
@@ -100,18 +100,22 @@ function renderGame() {
 	}
 	if (frog.collision(dog)) {
         if (dog.inventory.bugs < 10) {
-            clickengine.speak("hello lil doggy,\nplease catch me 10 bug", speak_config);
+            clickengine.speak(
+                "hello lil doggy,\nplease catch me 10 bug",
+                speak_config);
         } else {
-            clickengine.speak("congratulations! \ntrade me for my frog whistle?", speak_config);
+            clickengine.speak(
+                "congratulations! \ntrade me for my frog whistle?",
+                speak_config);
         }
 	}
-	
+
 	if (baby.collision(dog)) {
 		speak_config.horizontal_align = "left";
 		speak_config.vertical_align = "top";
-		clickengine.speak("cutie!", speak_config);
+		clickengine.speak("hey cutie!", speak_config);
 	}
-    
+
     for (var i = bugs.length-1; i >= 0; i--) {
         bugs[i].render();
     }
