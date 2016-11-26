@@ -1,4 +1,4 @@
-class Dog extends Animal {
+class Dog extends clickengine.GameObject {
     constructor() {
         super();
         this.animation.change(0, 0, 3);
@@ -7,41 +7,67 @@ class Dog extends Animal {
         this.IDLE_TIME = 360;
         this.idle = this.IDLE_TIME - 100;
         this.inventory = {};
+
+        this.destination = {
+            x: 0,
+            y: 0
+        }
+        this.clicked = false;
+        this.friend = null;
+        this.maybe_friend = null;
     }
 
-    update() {
-        super.update();
+    maybeHangOutWith(entity) {
+        if (entity.interactionCollision(dog)) {
+            this.maybe_friend = entity;
+            if (Input.isKeyPressed(Input.X)) {
+                if (dog.friend != entity) {
+                    dog.friend = entity;
+                } else {
+                    dog.friend = null;
+                }
+            }
+        }
+    }
 
+    update(entities) {
         var speed = 2;
         var moved = false;
 
-        if (Input.isKeyDown(Input.LEFT_KEY)){
-            this.x -= speed;
+        this.vel = { x: 0, y: 0 };
+        this.maybe_friend = null;
+        if (!this.clicked) this.destination = { x: this.x, y: this.y };
+        if (Input.isKeyDown(Input.LEFT_KEY) || this.destination.x < this.x){
+            this.vel.x = -speed;
             moved = true;
             // stick facing left
             this.animation.y_frame = 1;
         }
-        if (Input.isKeyDown(Input.RIGHT_KEY)){
-            this.x += speed;
+        if (Input.isKeyDown(Input.RIGHT_KEY) || this.destination.x > this.x){
+            this.vel.x = speed;
             moved = true;
             // stick facing right
             this.animation.y_frame = 0;
         }
-        if (Input.isKeyDown(Input.UP_KEY)){
-            this.y -= speed;
+        if (Input.isKeyDown(Input.UP_KEY) || this.destination.y < this.y){
+            this.vel.y = -speed;
             moved = true;
             // Change to up facing animation
             if (this.animation.y_frame < 2)
                 this.animation.y_frame += 2;
-            this.dance();
+            if (this.vel.x == 0) this.dance();
         }
-        if (Input.isKeyDown(Input.DOWN_KEY)){
-            this.y += speed;
+        if (Input.isKeyDown(Input.DOWN_KEY) || this.destination.y > this.y){
+            this.vel.y = speed;
             moved = true;
             // Change to down facing animation
             if (this.animation.y_frame >= 2)
                 this.animation.y_frame -= 2;
-            this.dance();
+            if (this.vel.x == 0) this.dance();
+        }
+
+        if (this.friend != null) {
+            this.vel = { x: 0, y: 0 };
         }
 
         if (moved){
@@ -56,6 +82,8 @@ class Dog extends Animal {
             if (delay < 16) delay = 16;
             this.animation.frame_delay = delay;
         }
+
+        super.update(entities);
     }
 
     dance() {
@@ -68,6 +96,19 @@ class Dog extends Animal {
                 this.animation.y_frame = 3;
             else if (this.animation.y_frame == 3)
                 this.animation.y_frame = 2;
+        }
+    }
+
+    render() {
+        super.render();
+        if (this.maybe_friend != null) {
+            ctx.fillStyle = "#000000";
+            var x = this.x + this.animation.frame_width/2 - 4;
+            var y = this.y - 4;
+            ctx.fillRect(x, y, 16, 16);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(x + 7, y + 3, 2, 6);
+            ctx.fillRect(x + 7, y + 11, 2, 2);
         }
     }
 }

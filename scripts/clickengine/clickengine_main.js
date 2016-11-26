@@ -4,16 +4,17 @@ var clickengine = function() {};
 
 clickengine.startGame = function(config) {
 	var canvas = config.canvas;
+	console.log(canvas);
 	clickengine.initCanvas(canvas.id, canvas.width, canvas.height, canvas.scale);
-	
+
     var loading = window.setInterval(clickengine.renderLoadingScreen, 100);
-	
+
 	Resources.loadImages({
         images: config.images,
         onload: function() {
             window.clearInterval(loading);
 			config.init();
-			
+
 			window.requestAnimFrame(clickengine.gameloop.bind(
 					this, config.update, config.render));
 
@@ -36,7 +37,7 @@ clickengine.initCanvas = function(id, width, height, scale) {
 clickengine.gameloop = function(update, render) {
 	clickengine.update(update);
 	clickengine.render(render);
-	
+
 	window.requestAnimFrame(clickengine.gameloop.bind(
 			this, update, render));
 };
